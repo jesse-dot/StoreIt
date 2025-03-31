@@ -24,6 +24,10 @@ export const uploadFile = async ({
   try {
     const inputFile = InputFile.fromBuffer(file, file.name);
 
+    if (file.size > 50 * 1024 * 1024 * 1024) {
+      throw new Error("File size exceeds the 50GB limit");
+    }
+
     const bucketFile = await storage.createFile(
       appwriteConfig.bucketId,
       ID.unique(),
@@ -213,7 +217,7 @@ export async function getTotalSpaceUsed() {
       audio: { size: 0, latestDate: "" },
       other: { size: 0, latestDate: "" },
       used: 0,
-      all: 2 * 1024 * 1024 * 1024 /* 2GB available bucket storage */,
+      all: 50 * 1024 * 1024 * 1024 /* 50GB available bucket storage */,
     };
 
     files.documents.forEach((file) => {
